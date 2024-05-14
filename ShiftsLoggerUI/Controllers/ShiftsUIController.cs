@@ -139,11 +139,8 @@ namespace ShiftsLoggerUI.Controllers
             using (var context = new ShiftContext(new DbContextOptions<ShiftContext>()))
             {
 
-                var id = context.Shifts.Select(x => x.Id).Max() + 1;
-
                 shift = new Shift()
                 {
-                    Id = id,
                     StartTime = startTime,
                     EndTime = endTime
                 };

@@ -135,14 +135,25 @@ public class ShiftsController : ControllerBase
         TimeSpan value = newShift.EndTime.Value.Subtract(newShift.StartTime.Value);
         if(value > TimeSpan.FromHours(24))
             return BadRequest();
-        DateTime date = DateTime.Parse(value.ToString("yyyy-MM-dd HH:mm:ss"));
-        newShift.Duration = date.ToString("yyyy-MM-dd HH:mm:ss");
+
+        DateTime date = DateTime.Parse(value.ToString());
+        newShift.Duration = date.ToString("HH:mm:ss");
         _context.Shifts.Add(newShift);
-        await _context.SaveChangesAsync();
+       
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            return NotFound();
+        }
+
+        //return newShift;
 
         return CreatedAtAction(
             nameof(GetShift),
-            new {id = newShift.Id},
+            new { id = newShift.Id },
             newShift);
     }
     
