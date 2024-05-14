@@ -103,5 +103,68 @@ namespace ShiftsLoggerUI.Controllers
             }
             return;
         }
+
+        public async Task StartNewShift()
+        {
+            using (var client = new HttpClient())
+            {
+                var result = await client.GetAsync("http://localhost:5294/api/Shifts/StartNewShift");
+                var response = await result.Content.ReadAsStringAsync();
+            }
+
+            return;
+        }
+
+        public async Task EndShift(int? id)
+        {
+            using (var client = new HttpClient())
+            {
+                var result = await client.GetAsync($"http://localhost:5294/api/Shifts/EndShift?Id={id}");
+                var response = await result.Content.ReadAsStringAsync();
+                var shift = JsonConvert.DeserializeObject<Shift>(response);
+
+                if (shift != null)
+                {
+                    TableVizualisationEngine.ShowTable(new List<Shift> { shift }, "Shifts");
+                }
+
+                return;
+            }
+        }
+
+        public async Task CreateNewShift(DateTime? startTime, DateTime? endTime)
+        {
+            var shift = new Shift();
+
+            using (var context = new ShiftContext(new DbContextOptions<ShiftContext>()))
+            {
+
+                var id = context.Shifts.Select(x => x.Id).Max() + 1;
+
+                shift = new Shift()
+                {
+                    Id = id,
+                    StartTime = startTime,
+                    EndTime = endTime
+                };
+            }
+
+            using (var client = new HttpClient())
+            {
+                var result = await client.PostAsJsonAsync($"http://localhost:5294/api/Shifts/CreateNewShift", shift);
+
+                var response = await result.Content.ReadAsStringAsync();
+                shift = JsonConvert.DeserializeObject<Shift>(response);
+
+                if (shift != null)
+                {
+                    TableVizualisationEngine.ShowTable(new List<Shift> { shift }, "Shifts");
+                }
+            }
+
+            return;
+        }
+
+       
     }
 }

@@ -30,6 +30,7 @@ public class UserInput
             Console.WriteLine("3 - Update a shift");
             Console.WriteLine("4 - Start new shift");
             Console.WriteLine("5 - End a shift");
+            Console.WriteLine("6 - Create a new shift with start and end times");
 
             var option = Console.ReadLine();
 
@@ -66,7 +67,19 @@ public class UserInput
                         
                     break;
                 case 4:
-                    //controller.DeleteRecord();
+                    await controller.StartNewShift();
+                    break;
+                case 5:
+                    var endShiftId = GetId();
+                    if (endShiftId != null)
+                        await controller.EndShift(endShiftId);
+                    break;
+                case 6:
+                    
+                    var createStartTime = GetStartTime();
+                    var createEndTime = GetEndTime();
+                    if (createStartTime != null && createEndTime != null)
+                        await controller.CreateNewShift(createStartTime, createEndTime);
                     break;
                 default:
                     break;

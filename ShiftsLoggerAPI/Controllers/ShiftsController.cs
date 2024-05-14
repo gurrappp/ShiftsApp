@@ -59,6 +59,8 @@ public class ShiftsController : ControllerBase
         if(shift.EndTime != null && shift.StartTime != null)
         {
             TimeSpan value = shift.EndTime.Value.Subtract(shift.StartTime.Value);
+            if (value > TimeSpan.FromHours(24))
+                return BadRequest();
             DateTime date = DateTime.Parse(value.ToString());
             shift.Duration = date.ToString("HH:mm:ss");
         }
@@ -74,7 +76,7 @@ public class ShiftsController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost]
+    [HttpGet]
     public async Task<ActionResult<Shift>> StartNewShift()
     {
         //if (newShift == null)
@@ -96,8 +98,8 @@ public class ShiftsController : ControllerBase
             newShift);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult> EndShift(int id)
+    [HttpGet]
+    public async Task<ActionResult<Shift>> EndShift(int id)
     {
         
         var shift = _context.Shifts.Find(id);
@@ -106,6 +108,8 @@ public class ShiftsController : ControllerBase
 
         shift.EndTime = DateTime.Now;
         TimeSpan value = shift.EndTime.Value.Subtract(shift.StartTime.Value);
+        if (value > TimeSpan.FromHours(24))
+            return BadRequest();
         DateTime date = DateTime.Parse(value.ToString());
         shift.Duration = date.ToString("HH:mm:ss");
 
@@ -118,7 +122,7 @@ public class ShiftsController : ControllerBase
             return NotFound();
         }
 
-        return NoContent();
+        return shift;
     }
 
     [HttpPost]
@@ -127,9 +131,12 @@ public class ShiftsController : ControllerBase
         if(newShift == null || newShift.StartTime == null || newShift.EndTime == null)
             return BadRequest();
 
+       
         TimeSpan value = newShift.EndTime.Value.Subtract(newShift.StartTime.Value);
-        DateTime date = DateTime.Parse(value.ToString());
-        newShift.Duration = date.ToString("HH:mm:ss");
+        if(value > TimeSpan.FromHours(24))
+            return BadRequest();
+        DateTime date = DateTime.Parse(value.ToString("yyyy-MM-dd HH:mm:ss"));
+        newShift.Duration = date.ToString("yyyy-MM-dd HH:mm:ss");
         _context.Shifts.Add(newShift);
         await _context.SaveChangesAsync();
 
