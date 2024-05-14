@@ -17,17 +17,7 @@ namespace ShiftsLoggerUI.Controllers
 {
     public class ShiftsUIController
     {
-        //private string connectionString;
-        //public ShiftsUIController() 
-        //{
-        //    IConfigurationRoot configuration =
-        //    new ConfigurationBuilder()
-        //    .SetBasePath(Directory.GetCurrentDirectory())
-        //    .AddJsonFile("appsettings.json")
-        //    .Build();
-        //    connectionString = configuration.GetConnectionString("DbContext") ?? "";
-        //}
-
+        
         public async Task GetShifts()
         {
             List<Shift> shifts = new List<Shift>();
