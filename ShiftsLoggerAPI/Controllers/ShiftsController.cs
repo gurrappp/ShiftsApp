@@ -103,7 +103,7 @@ public class ShiftsController : ControllerBase
     {
         
         var shift = _context.Shifts.Find(id);
-        if (shift == null || shift.StartTime == null)
+        if (shift == null || shift.StartTime == null || shift.EndTime.HasValue)
             return BadRequest();
 
         shift.EndTime = DateTime.Now;
@@ -147,9 +147,7 @@ public class ShiftsController : ControllerBase
         catch (Exception e)
         {
             return NotFound();
-        }
-
-        //return newShift;
+        }   
 
         return CreatedAtAction(
             nameof(GetShift),

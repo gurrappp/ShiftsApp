@@ -17,16 +17,16 @@ namespace ShiftsLoggerUI.Controllers
 {
     public class ShiftsUIController
     {
-        private string connectionString;
-        public ShiftsUIController() 
-        {
-            IConfigurationRoot configuration =
-            new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
-            connectionString = configuration.GetConnectionString("DbContext") ?? "";
-        }
+        //private string connectionString;
+        //public ShiftsUIController() 
+        //{
+        //    IConfigurationRoot configuration =
+        //    new ConfigurationBuilder()
+        //    .SetBasePath(Directory.GetCurrentDirectory())
+        //    .AddJsonFile("appsettings.json")
+        //    .Build();
+        //    connectionString = configuration.GetConnectionString("DbContext") ?? "";
+        //}
 
         public async Task GetShifts()
         {
@@ -35,8 +35,9 @@ namespace ShiftsLoggerUI.Controllers
             {
                 var result = await client.GetAsync("http://localhost:5294/api/Shifts/GetShifts");
                 var response = await result.Content.ReadAsStringAsync();
-                //TRYCATCH HÄR
-                shifts = JsonConvert.DeserializeObject<List<Shift>>(response);
+                
+                if(response != null)
+                    shifts = JsonConvert.DeserializeObject<List<Shift>>(response);
 
                 if(shifts != null && shifts.Count > 0)
                 {
@@ -151,6 +152,7 @@ namespace ShiftsLoggerUI.Controllers
                 var result = await client.PostAsJsonAsync($"http://localhost:5294/api/Shifts/CreateNewShift", shift);
 
                 var response = await result.Content.ReadAsStringAsync();
+
                 shift = JsonConvert.DeserializeObject<Shift>(response);
 
                 if (shift != null)
